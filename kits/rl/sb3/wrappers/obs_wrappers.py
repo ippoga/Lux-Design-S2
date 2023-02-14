@@ -16,6 +16,7 @@ class SimpleUnitObservationWrapper(gym.ObservationWrapper):
     Included features:
     - First robot's stats
     - distance vector to closest ice tile
+    - distance vector to closest ore tile
     - distance vector to first factory
 
     """
@@ -32,8 +33,10 @@ class SimpleUnitObservationWrapper(gym.ObservationWrapper):
     def convert_obs(obs: Dict[str, Any], env_cfg: Any) -> Dict[str, npt.NDArray]:
         observation = dict()
         shared_obs = obs["player_0"]
-        ice_map = shared_obs["board"]["ice"]
-        ice_tile_locations = np.argwhere(ice_map == 1)
+#         ice_map = shared_obs["board"]["ice"]
+#         ice_tile_locations = np.argwhere(ice_map == 1)
+        ore_map = shared_obs["board"]["ore"]
+        ore_tile_locations = np.argwhere(ore_map == 1)
 
         for agent in obs.keys():
             obs_vec = np.zeros(
@@ -73,16 +76,16 @@ class SimpleUnitObservationWrapper(gym.ObservationWrapper):
                 )
 
                 # we add some engineered features down here
-                # compute closest ice tile
-                ice_tile_distances = np.mean(
-                    (ice_tile_locations - np.array(unit["pos"])) ** 2, 1
+                # compute closest ore tile
+                ore_tile_distances = np.mean(
+                    (ore_tile_locations - np.array(unit["pos"])) ** 2, 1
                 )
-                # normalize the ice tile location
-                closest_ice_tile = (
-                    ice_tile_locations[np.argmin(ice_tile_distances)] / env_cfg.map_size
+                # normalize the ore tile location
+                closest_ore_tile = (
+                    ore_tile_locations[np.argmin(ore_tile_distances)] / env_cfg.map_size
                 )
                 obs_vec = np.concatenate(
-                    [unit_vec, factory_vec - pos, closest_ice_tile - pos], axis=-1
+                    [unit_vec, factory_vec - pos, closest_ore_tile - pos], axis=-1
                 )
                 break
             observation[agent] = obs_vec
