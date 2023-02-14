@@ -63,10 +63,10 @@ class CustomEnvWrapper(gym.Wrapper):
 
         info = dict()
         metrics = dict()
-        metrics["ice_dug"] = (
-            stats["generation"]["ice"]["HEAVY"] + stats["generation"]["ice"]["LIGHT"]
+        metrics["ore_dug"] = (
+            stats["generation"]["ore"]["HEAVY"] + stats["generation"]["ore"]["LIGHT"]
         )
-        metrics["water_produced"] = stats["generation"]["water"]
+        metrics["metal_produced"] = stats["generation"]["metal"]
 
         # we save these two to see often the agent updates robot action queues and how often enough
         # power to do so and succeed (less frequent updates = more power is saved)
@@ -78,13 +78,13 @@ class CustomEnvWrapper(gym.Wrapper):
 
         reward = 0
         if self.prev_step_metrics is not None:
-            # we check how much ice and water is produced and reward the agent for generating both
-            ice_dug_this_step = metrics["ice_dug"] - self.prev_step_metrics["ice_dug"]
-            water_produced_this_step = (
-                metrics["water_produced"] - self.prev_step_metrics["water_produced"]
+            # we check how much ore and metal is produced and reward the agent for generating both
+            ore_dug_this_step = metrics["ore_dug"] - self.prev_step_metrics["ore_dug"]
+            metal_produced_this_step = (
+                metrics["metal_produced"] - self.prev_step_metrics["metal_produced"]
             )
-            # we reward water production more as it is the most important resource for survival
-            reward = ice_dug_this_step / 100 + water_produced_this_step
+            # we reward metal production more as it is the most important resource for survival
+            reward = ore_dug_this_step / 100 + metal_produced_this_step
 
         self.prev_step_metrics = copy.deepcopy(metrics)
         return obs, reward, done, info
@@ -99,7 +99,7 @@ def parse_args():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Simple script that simplifies Lux AI Season 2 as a single-agent environment with a reduced observation and action space. It trains a policy that can succesfully control a heavy unit to dig ice and transfer it back to a factory to keep it alive"
+        description="Simple script that simplifies Lux AI Season 2 as a single-agent environment with a reduced observation and action space. It trains a policy that can succesfully control a heavy unit to dig ore and transfer it back to a factory to keep it alive"
     )
     parser.add_argument("-s", "--seed", type=int, default=12, help="seed for training")
     parser.add_argument(
