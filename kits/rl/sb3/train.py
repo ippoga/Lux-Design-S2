@@ -44,7 +44,13 @@ class CustomEnvWrapper(gym.Wrapper):
     def step(self, action):
         agent = "player_0"
         opp_agent = "player_1"
-
+        
+        friend_factories = self.env.state.factories[agent]
+        for k in friend_factories.keys():
+            factory = friend_factories[k]
+            # set factories to have 1000 water to keep them alive the whole around and treat the game as single-agent
+            factory.cargo.water = 1000
+            
         opp_factories = self.env.state.factories[opp_agent]
         for k in opp_factories.keys():
             factory = opp_factories[k]
