@@ -36,7 +36,7 @@ class SimpleUnitDiscreteController(Controller):
         For the robot unit
         - 4 cardinal direction movement (4 dims)
         - a move center no-op action (1 dim)
-        - transfer action just for transferring ice in 4 cardinal directions or center (5)
+        - transfer action just for transferring ore in 4 cardinal directions or center (5)
         - pickup action for power (1 dims)
         - dig action (1 dim)
         - no op action (1 dim) - equivalent to not submitting an action queue which costs power
@@ -46,7 +46,7 @@ class SimpleUnitDiscreteController(Controller):
         - recharge action
         - planning (via actions executing multiple times or repeating actions)
         - factory actions
-        - transferring power or resources other than ice
+        - transferring power or resources other than ore
 
         To help understand how to this controller works to map one action space to the original lux action space,
         see how the lux action space is defined in luxai_s2/spaces/action.py
@@ -82,7 +82,7 @@ class SimpleUnitDiscreteController(Controller):
     def _get_transfer_action(self, id):
         id = id - self.move_dim_high
         transfer_dir = id % 5
-        return np.array([1, transfer_dir, 0, self.env_cfg.max_transfer_amount, 0, 1])
+        return np.array([1, transfer_dir, 1, self.env_cfg.max_transfer_amount, 0, 1]) #changed resouce number 0 to 1 for ore
 
     def _is_pickup_action(self, id):
         return id < self.pickup_dim_high
